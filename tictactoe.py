@@ -36,6 +36,11 @@ TIED_2D = np.array([
     [X, X, O],
     [O, X, O],
 ])
+MIDGAME_2D = np.array([
+    [O, BLANK, X],
+    [BLANK, BLANK, BLANK],
+    [X, BLANK, BLANK]
+])
 
 
 # A function to give all the possible actions for players in the game.
@@ -88,10 +93,18 @@ def has_won_2d(board, player_mark):
     # Since they don't fill own a row, column, or diagonal completely, they haven't won.
     return False
 
-# We test our function against our four examples.
-assert (has_won_2d(BLANK_GAME_2D, X) == False)
-assert (has_won_2d(X_WON_2D, X) == True)
-assert (has_won_2d(O_WON_2D, X) == False)
+
+# We test our function against our examples.
+assert (not has_won_2d(BLANK_GAME_2D, X))
+assert (not has_won_2d(BLANK_GAME_2D, O))
+assert (has_won_2d(X_WON_2D, X))
+assert (not has_won_2d(O_WON_2D, X))
+assert (has_won_2d(O_WON_2D, O))
+assert (not has_won_2d(O_WON_2D, X))
+assert (not has_won_2d(TIED_2D, X))
+assert (not has_won_2d(TIED_2D, O))
+assert (not has_won_2d(MIDGAME_2D, X))
+assert (not has_won_2d(MIDGAME_2D, O))
 
 
 # A helper function to determine if a 2D-game-slice of tic-tac-toe is over.
@@ -107,14 +120,16 @@ def game_over_2d(board):
         return True
     elif np.all(board != BLANK):
         return True
+    else:
+        return False
 
 
-def game_over_3d(box):
-    """
-    Returns if the tic tac toe game is over.
-    :param box:   The 3d-tic-tac-toe structure.
-    :return:        If the game is won (true), or tied by the two players. False otherwise.
-    """
+# Some small testing scenarios. Can obviously be less extensive than win checking.
+assert (not game_over_2d(BLANK_GAME_2D))
+assert (not game_over_2d(MIDGAME_2D))
+assert (game_over_2d(X_WON_2D))
+assert (game_over_2d(O_WON_2D))
+assert (game_over_2d(TIED_2D))
 
 
 def has_won_3d(box, player_mark):
@@ -125,6 +140,50 @@ def has_won_3d(box, player_mark):
     :return:    True if the player has won the game, false otherwise.
     """
     # We first slice by x coordinate.
+    for x in range(3):
+        if has_won_2d(box[x:(x + 1), 0:3, 0:3], player_mark):
+            return True
     # We then slice by y coordinate.
+    for y in range(3):
+        if has_won_2d(box[0:3, y:(y + 1), 0:3], player_mark):
+            return True
     # We then slice by z coordinate.
+    for z in range(3):
+        if has_won_2d(box[0:3, 0:3, z:(z + 1)], player_mark):
+            return True
     # We then check the diagonals.
+    if (  # Parenthesis let me put these coordinates together a little more visually.
+            box[0, 0, 0] == player_mark and
+            box[1, 1, 1] == player_mark and
+            box[2, 2, 2] == player_mark
+    ) or (
+            box[0, 0, 2] == player_mark and
+            box[1, 1, 1] == player_mark and
+            box[2, 2, 0] == player_mark
+    ) or (
+            box[0, 2, 0] == player_mark and
+            box[1, 1, 1] == player_mark and
+            box[2, 0, 2] == player_mark
+    ) or (
+            box[2, 0, 0] == player_mark and
+            box[1, 1, 1] == player_mark and
+            box[0, 2, 2] == player_mark
+    ):
+        return True
+    return False
+
+
+def game_over_3d(box):
+    """
+    Returns if the tic tac toe game is over.
+    :param box:   The 3d-tic-tac-toe structure.
+    :return:        If the game is won (true), or tied by the two players. False otherwise.
+    """
+    if has_won_3d(box, X):
+        return True
+    elif has_won_3d(box, O):
+        return True
+    elif np.all(box != BLANK):
+        return True
+    else:
+        return False
