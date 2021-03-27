@@ -18,8 +18,8 @@ BLANK = 0
 # and all elements are either X, O, or BLANK.
 
 # For example, here we define a blank 2D game, and a blank 3D game.
-BLANK_GAME_2D = np.zeros((3, 3), dtype=type(X))
-BLANK_GAME_3D = np.zeros((3, 3, 3), dtype=type(X))
+BLANK_GAME_2D = np.zeros((3, 3))
+BLANK_GAME_3D = np.zeros((3, 3, 3))
 # We define some more complicated examples below as well, the purpose being to aid testing.
 X_WON_2D = np.array([
     [O, O, O],
