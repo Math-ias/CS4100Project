@@ -7,6 +7,8 @@ import numpy as np
 # In order to define expected outputs easily, I don't want to write our coordinates manually.
 from itertools import product
 
+import examples
+
 # A tic-tac-toe mark is defined as one of the following.
 X = -1
 O = 1
@@ -171,6 +173,16 @@ def has_won_3d(box, player_mark):
     ):
         return True
     return False
+
+assert (has_won_3d(examples.X_WON_3D_X, X))
+assert (has_won_3d(examples.X_WON_3D_Y, X))
+assert (has_won_3d(examples.X_WON_3D_Z, X))
+
+assert (has_won_3d(examples.X_WON_3D_XY, X))
+assert (has_won_3d(examples.X_WON_3D_XZ, X))
+assert (has_won_3d(examples.X_WON_3D_YZ, X))
+
+assert (has_won_3d(examples.X_WON_3D_XYZ, X))
 
 
 def game_over_3d(box):
