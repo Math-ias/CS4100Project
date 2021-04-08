@@ -30,7 +30,7 @@ BLANK_GAME_2D = np.zeros((3, 3), dtype=np.dtype('b'))
 
 # We define some more complicated examples below as well, the purpose being to aid testing.
 X_WON_2D = np.array([
-    [O, O, O],
+    [O, O, _],
     [X, O, _],
     [X, X, X],
 ], dtype=np.dtype('b'))
@@ -57,6 +57,9 @@ MIDGAME_2D = np.array([
 # ~~~~~~~~~~~~~~~~~~~~~~3-Dimensional Games~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
+# Numpy slice access on these cubes goes indexing the planes, we might think of this as z.
+# Then it indexes the rows, we might think of this as y.
+# THen it indexes the columns, we might think of this as x.
 BLANK_GAME_3D = np.zeros((3, 3, 3), dtype=np.dtype('b'))
 
 # An X dimensional win. X wins along the easiest slice.
