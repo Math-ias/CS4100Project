@@ -2,10 +2,10 @@
 A module of useful functions for tic-tac-toe games
 """
 
-# Use this to manipulate tic-tac-toe data.
-import numpy as np
 # Use this as a helper function for some tedious iterations.
 from itertools import product
+# Use this to manipulate tic-tac-toe data.
+import numpy as np
 # Use this to bring in data definitions, and some examples to test on.
 import tictactoedata as data
 
@@ -44,7 +44,7 @@ def has_won_2d(board, player_mark):
     # And the diagonals.
     if board[0, 0] == player_mark and board[1, 1] == player_mark and board[2, 2] == player_mark:
         return True
-    elif board[2, 0] == player_mark and board[1, 1] == player_mark and board[0, 2] == player_mark:
+    if board[2, 0] == player_mark and board[1, 1] == player_mark and board[0, 2] == player_mark:
         return True
     # Since they don't fill own a row, column, or diagonal completely, they haven't won.
     return False
@@ -58,12 +58,12 @@ def game_over_2d(board):
     """
     if has_won_2d(board, data.X):
         return True
-    elif has_won_2d(board, data.O):
+    if has_won_2d(board, data.O):
         return True
-    elif np.all(board != data.BLANK_MARKER):
+    if np.all(board != data.BLANK_MARKER):
         return True
-    else:
-        return False
+
+    return False
 
 
 def has_won_3d(box, player_mark):
@@ -74,18 +74,19 @@ def has_won_3d(box, player_mark):
     :return:    True if the player has won the game, false otherwise.
     """
     # We first slice by x coordinate.
-    for x in range(3):
-        if has_won_2d(box[x, :, :], player_mark):
+    for z_coordinate in range(3):
+        if has_won_2d(box[z_coordinate, :, :], player_mark):
             return True
     # We then slice by y coordinate.
-    for y in range(3):
-        if has_won_2d(box[:, y, :], player_mark):
+    for y_coordinate in range(3):
+        if has_won_2d(box[:, y_coordinate, :], player_mark):
             return True
     # We then slice by z coordinate.
-    for z in range(3):
-        if has_won_2d(box[:, :, z], player_mark):
+    for x_coordinate in range(3):
+        if has_won_2d(box[:, :, x_coordinate], player_mark):
             return True
     # We then check the diagonals.
+    # pylint: disable=R0916
     if (  # Parenthesis let me put these coordinates together a little more visually.
             box[0, 0, 0] == player_mark and
             box[1, 1, 1] == player_mark and
@@ -115,9 +116,9 @@ def game_over_3d(box):
     """
     if has_won_3d(box, data.X_MARKER):
         return True
-    elif has_won_3d(box, data.O_MARKER):
+    if has_won_3d(box, data.O_MARKER):
         return True
-    elif np.all(box != data.BLANK_MARKER):
+    if np.all(box != data.BLANK_MARKER):
         return True
-    else:
-        return False
+
+    return False

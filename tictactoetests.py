@@ -4,12 +4,12 @@ A collection of unit-tests for tictactoe.py.
 
 # Something provided in Python 3. Neat!
 import unittest
+# A useful function for generating data.
+from itertools import product
 # The functions we are testing are from this module.
 import tictactoe
 # The data and examples necessary to test this function are from here.
 import tictactoedata as data
-# A useful function for generating data.
-from itertools import product
 
 
 # Sets are used in these tests to avoid order comparison.
@@ -22,8 +22,10 @@ class TestAvailableSpots(unittest.TestCase):
         """
         Blank games should return all the coordinates.
         """
-        self.assertEqual(set(tictactoe.available_spots(data.BLANK_GAME_2D)), set(product(range(3), repeat=2)))
-        self.assertEqual(set(tictactoe.available_spots(data.BLANK_GAME_3D)), set(product(range(3), repeat=3)))
+        self.assertEqual(set(tictactoe.available_spots(data.BLANK_GAME_2D)),
+                         set(product(range(3), repeat=2)))
+        self.assertEqual(set(tictactoe.available_spots(data.BLANK_GAME_3D)),
+                         set(product(range(3), repeat=3)))
 
     def test_finished(self):
         """
@@ -38,7 +40,7 @@ class TestAvailableSpots(unittest.TestCase):
         # This is prone to break if the example changes.
         # Other example names are descriptive enough to ensure compat.
         self.assertEqual(set(tictactoe.available_spots(data.MIDGAME_2D)),
-                          {(1, 0), (0, 1), (1, 1), (2, 1), (1, 2), (2, 2)})
+                         {(1, 0), (0, 1), (1, 1), (2, 1), (1, 2), (2, 2)})
 
 
 class TestHasWon2D(unittest.TestCase):
