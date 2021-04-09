@@ -4,7 +4,7 @@ A module to run search algorithms on a game of tic tac toe.
 
 from functools import lru_cache
 import tictactoe
-from tictactoedata import X_MARKER, O_MARKER, BLANK_GAME_3D, X_WON_3D_XYZ
+from tictactoedata import X_MARKER, O_MARKER, BLANK_GAME_3D
 import numpy as np
 from hashlib import sha1
 
@@ -71,9 +71,21 @@ def min_max_value(wrapper, turn):
     successors = map(lambda action: play(wrapper, action, X_MARKER if turn else O_MARKER),
                      tictactoe.available_spots(wrapper.data))
     if turn:  # We are X and want to maximize for ourselves.
-        return max(map(lambda successor: min_max_value(successor, not turn), successors))
+        found_tie = False
+        for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
+            if successor_utility == 1:
+                return 1
+            elif successor_utility == 0:
+                found_tie = True
+        return 0 if found_tie else -1
     else:  # We are O and want to minimize.
-        return min(map(lambda successor: min_max_value(successor, not turn), successors))
+        found_tie = False
+        for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
+            if successor_utility == -1:
+                return -1
+            elif successor_utility == 0:
+                found_tie = True
+        return 0 if found_tie else 1
 
 
 if __name__ == '__main__':
