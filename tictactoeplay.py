@@ -91,6 +91,7 @@ def game_loop():
             current_game = current_game.copy()
             current_game[action] = data.X_MARKER if xs_turn else data.O_MARKER
             xs_turn = not xs_turn
+        game_states.append(current_game)  # We append the winning game state.
     return game_states
 
 
