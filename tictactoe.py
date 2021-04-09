@@ -22,8 +22,8 @@ def available_spots(game):
     :param: game    Any tic-tac-toe structure.
     :return:        An iterable of available spots for marks.
     """
-    return filter(lambda coordinate_tuple: game[coordinate_tuple] == data.BLANK_MARKER,
-                  product(range(3), repeat=game.ndim))
+    return list(filter(lambda coordinate_tuple: game[coordinate_tuple] == data.BLANK_MARKER,
+                      product(range(3), repeat=game.ndim)))
 
 
 def has_won_2d(board, player_mark):
