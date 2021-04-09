@@ -63,13 +63,15 @@ def game_loop():
             while not action:
                 drawn_symbols = symbols.copy()
                 coordinate_index = coordinate_to_index(available_actions[action_index])
-                drawn_symbols[coordinate_index] = term.underline(drawn_symbols[coordinate_index])
+                drawn_symbols[coordinate_index] = term.underline('-')
                 print(term.home + term.clear)
                 print(VERTICAL_SLICES.format(*drawn_symbols))
+                print("Press left, right, up, or down to cycle between potential moves.")
+                print("Press any other key to commit a move.")
                 key = term.inkey()
                 if key.code == term.KEY_RIGHT:  # Right means increase the index by one.
                     action_index = (action_index + 1) % len(available_actions)
-                elif key.code == term.KEY_UP or key.code == term.KEY_DOWN:  # Up means some complicated lookup logic. Copied for down.
+                elif key.code == term.KEY_UP or key.code == term.KEY_DOWN:  # Up, down complex
                     current_action = available_actions[action_index]
                     y_diff = 1 if key.code == term.KEY_DOWN else -1
                     closest_action = min(
