@@ -29,10 +29,10 @@ def marker_to_symbol(marker):
     """
     if marker == data.X_MARKER:
         return 'X'
-    elif marker == data.O_MARKER:
+    if marker == data.O_MARKER:
         return 'O'
-    else:
-        return '.'
+
+    return '.'
 
 
 def coordinate_to_index(coordinate):
@@ -43,15 +43,20 @@ def coordinate_to_index(coordinate):
     """
     return coordinate[0] * 9 + coordinate[1] * 3 + coordinate[2]
 
-if __name__ == '__main__':
+
+def game_loop():
+    """
+    Runs a game once until it's won.
+    :return:    The game states of this game.
+    """
     term = Terminal()
     current_game = data.BLANK_GAME_3D
-    turn = True  # True when it's X's turn, False otherwise.
+    xs_turn = True  # True when it's X's turn, False otherwise.
     game_states = []  # A collection of game states to manipulate at the end.
     with term.fullscreen(), term.cbreak():  # We capture the full screen and don't print out input.
         while not tictactoe.game_over_3d(current_game):  # We go until the game is over.
             available_actions = tictactoe.available_spots(current_game)
-            assert (len(available_actions) > 0)  # Otherwise, the game should be over.
+            assert len(available_actions) > 0  # Otherwise, the game should be over.
             action_index = 0
             action = None
             symbols = list(map(marker_to_symbol, current_game.flatten()))
@@ -71,17 +76,22 @@ if __name__ == '__main__':
             # Right, an action was picked so we append the previous game state and apply the update.
             game_states.append(current_game)
             current_game = current_game.copy()
-            current_game[action] = data.X_MARKER if turn else data.O_MARKER
-            turn = not turn
+            current_game[action] = data.X_MARKER if xs_turn else data.O_MARKER
+            xs_turn = not xs_turn
+    return game_states
 
+
+if __name__ == '__main__':
+    game_frames = game_loop()
+    assert len(game_frames) > 0
     print("\n")
     print('Game is over.')
-    if tictactoe.has_won_3d(current_game, data.X_MARKER):
+    if tictactoe.has_won_3d(game_frames[-1], data.X_MARKER):
         print('X has won.')
-    elif tictactoe.has_won_3d(current_game, data.O_MARKER):
+    if tictactoe.has_won_3d(game_frames[-1], data.O_MARKER):
         print('O has won.')
     else:
         print('Tied.')
     print('The following game states were reached (flattened).')
-    for game in game_states:
-        print(game.flatten())
+    for game in game_frames:
+        print(list(game.flatten()))
