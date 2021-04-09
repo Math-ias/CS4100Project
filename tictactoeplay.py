@@ -69,6 +69,17 @@ def game_loop():
                 key = term.inkey()
                 if key.code == term.KEY_RIGHT:  # Right means increase the index by one.
                     action_index = (action_index + 1) % len(available_actions)
+                elif key.code == term.KEY_UP or key.code == term.KEY_DOWN:  # Up means some complicated lookup logic. Copied for down.
+                    current_action = available_actions[action_index]
+                    y_diff = 1 if key.code == term.KEY_DOWN else -1
+                    closest_action = min(
+                        filter(lambda coordinate: coordinate[0] == (current_action[0] + y_diff) % 3,
+                               available_actions),
+                        key=lambda coordinate: abs(coordinate[1] - current_action[1]) + abs(
+                            coordinate[2] - current_action[2]),
+                        default=None)
+                    if closest_action:
+                        action_index = available_actions.index(closest_action)
                 elif key.code == term.KEY_LEFT:  # Left means decreases the index by one.
                     action_index = (action_index - 1) % len(available_actions)
                 else:  # Any other key means pick.
