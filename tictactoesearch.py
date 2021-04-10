@@ -4,7 +4,7 @@ A module to run search algorithms on a game of tic tac toe.
 
 from functools import lru_cache
 import tictactoe
-from tictactoedata import X_MARKER, O_MARKER, BLANK_GAME_3D
+from tictactoedata import X_MARKER, O_MARKER, GAME_2
 import numpy as np
 from hashlib import sha1
 
@@ -56,7 +56,7 @@ def play(wrapper, action, marker):
     new_copy[action] = marker
     return TicTacToeWrapper(new_copy)
 
-@lru_cache(maxsize=2048)
+@lru_cache(maxsize=None)
 def min_max_value(wrapper, turn):
     """
     Recursively finds the min, max, value of a certain wrapped game.
@@ -89,4 +89,4 @@ def min_max_value(wrapper, turn):
 
 
 if __name__ == '__main__':
-    print(min_max_value(TicTacToeWrapper(BLANK_GAME_3D), True))
+    print(min_max_value(TicTacToeWrapper(GAME_2[-2]), True))
