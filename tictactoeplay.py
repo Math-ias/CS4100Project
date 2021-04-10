@@ -3,6 +3,7 @@ A module dedicated to playing tic tac toe with a human.
 """
 
 from blessed import Terminal
+from numpy import ravel_multi_index
 import tictactoedata as data
 import tictactoe
 
@@ -21,27 +22,30 @@ VERTICAL_SLICES = """
 """
 
 
-def marker_to_symbol(marker):
+def zipped_x_o_value_to_character(tup):
     """
-    Returns a string representation of a marker in a tic-tac-toe structure.
-    :param marker:  The marker to convert.
-    :return:        A single character string.
+    Converts a tuple of booleans indicating placement of x or o markers, and returns a character representation.
+    :param tup: A tuple of a boolean, indicating if an x is placed, a second boolean, indicating if an o is placed.
+    :return:    One of three characters, 'X', 'O', or '.' the last indicating an empty spot.
     """
-    if marker == data.X_MARKER:
+    x_placed, o_placed = tup
+    assert not (x_placed and o_placed)
+    if x_placed:
         return 'X'
-    if marker == data.O_MARKER:
+    if o_placed:
         return 'O'
 
     return '.'
 
 
-def coordinate_to_index(coordinate):
+def flattened_characters(game):
     """
-    Converts a coordinate in the game matrix to the index in the vertical slice mark.
-    :param coordinate:  The 3d-coordinate to convert into an index.
-    :return:            An index from 0 to 26.
+    Returns a flattened array of single character strings.
+    :param game:    The game state to flatten into a string representation.
+    :return:        A flattened array.
     """
-    return coordinate[0] * 9 + coordinate[1] * 3 + coordinate[2]
+    return list(map(zipped_x_o_value_to_character,
+                    zip(game[0].flatten(), game[1].flatten())))
 
 
 def game_loop():
@@ -56,23 +60,24 @@ def game_loop():
     with term.fullscreen(), term.cbreak():  # We capture the full screen and don't print out input.
         while not tictactoe.game_over_3d(current_game):  # We go until the game is over.
             available_actions = tictactoe.available_spots(current_game)
-            assert len(available_actions) > 0  # Otherwise, the game should be over.
-            action_index = 0
+            assert len(available_actions) > 0  # Otherwise, the game should be over ...
+            potential_action_index = 0
             action = None
-            symbols = list(map(marker_to_symbol, current_game.flatten()))
+            flattened_markers = flattened_characters(current_game)
             while not action:
-                drawn_symbols = symbols.copy()
-                coordinate_index = coordinate_to_index(available_actions[action_index])
-                drawn_symbols[coordinate_index] = term.underline('-')
+                drawn_symbols = flattened_markers.copy()
+                potential_action = available_actions[potential_action_index]
+                flattened_potential_action_index = ravel_multi_index(potential_action, (3, 3, 3))
+                drawn_symbols[flattened_potential_action_index] = term.underline('-')
                 print(term.home + term.clear)
                 print(VERTICAL_SLICES.format(*drawn_symbols))
                 print("Press left, right, up, or down to cycle between potential moves.")
                 print("Press any other key to commit a move.")
                 key = term.inkey()
                 if key.code == term.KEY_RIGHT:  # Right means increase the index by one.
-                    action_index = (action_index + 1) % len(available_actions)
+                    potential_action_index = (potential_action_index + 1) % len(available_actions)
                 elif key.code == term.KEY_UP or key.code == term.KEY_DOWN:  # Up, down complex
-                    current_action = available_actions[action_index]
+                    current_action = available_actions[potential_action_index]
                     y_diff = 1 if key.code == term.KEY_DOWN else -1
                     closest_action = min(
                         filter(lambda coordinate: coordinate[0] == (current_action[0] + y_diff) % 3,
@@ -81,15 +86,15 @@ def game_loop():
                             coordinate[2] - current_action[2]),
                         default=None)
                     if closest_action:
-                        action_index = available_actions.index(closest_action)
+                        potential_action_index = available_actions.index(closest_action)
                 elif key.code == term.KEY_LEFT:  # Left means decreases the index by one.
-                    action_index = (action_index - 1) % len(available_actions)
+                    potential_action_index = (potential_action_index - 1) % len(available_actions)
                 else:  # Any other key means pick.
-                    action = available_actions[action_index]
+                    action = available_actions[potential_action_index]
             # Right, an action was picked so we append the previous game state and apply the update.
             game_states.append(current_game)
             current_game = current_game.copy()
-            current_game[action] = data.X_MARKER if xs_turn else data.O_MARKER
+            current_game[0 if xs_turn else 1][action] = True
             xs_turn = not xs_turn
         game_states.append(current_game)  # We append the winning game state.
     return game_states
@@ -98,14 +103,16 @@ def game_loop():
 if __name__ == '__main__':
     game_frames = game_loop()
     assert len(game_frames) > 0
+    last_frame = game_frames[-1]
+    assert tictactoe.game_over_3d(last_frame)
     print("\n")
     print('Game is over.')
-    if tictactoe.has_won_3d(game_frames[-1], data.X_MARKER):
+    if tictactoe.has_won_3d(last_frame[0]):
         print('X has won.')
-    if tictactoe.has_won_3d(game_frames[-1], data.O_MARKER):
+    if tictactoe.has_won_3d(last_frame[1]):
         print('O has won.')
     else:
         print('Tied.')
     print('The following game states were reached (flattened).')
     for game in game_frames:
-        print(list(game.flatten()))
+        print(list(map(lambda boolean: int(boolean), game.flatten())))

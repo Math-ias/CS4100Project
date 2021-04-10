@@ -4,7 +4,7 @@ A module to run search algorithms on a game of tic tac toe.
 
 from functools import lru_cache
 import tictactoe
-from tictactoedata import X_MARKER, O_MARKER, GAME_2
+from tictactoedata import GAME_2
 import numpy as np
 from hashlib import sha1
 
@@ -33,9 +33,9 @@ def utility(wrapper):
     :param wrapper: The TicTacToeWrapper to evaluate for utility.
     :return:        The utility of tic tac toe if terminal, else None.
     """
-    if tictactoe.has_won_3d(wrapper.data, X_MARKER):
+    if tictactoe.has_won_3d(wrapper.data[0]):
         return 1
-    elif tictactoe.has_won_3d(wrapper.data, O_MARKER):
+    elif tictactoe.has_won_3d(wrapper.data[1]):
         return -1
     elif tictactoe.game_over_3d(wrapper.data):
         return 0
@@ -43,18 +43,19 @@ def utility(wrapper):
         return None
 
 
-def play(wrapper, action, marker):
+def play(wrapper, action, index):
     """
     Play a coordinate action in tic tac toe given a game and the marker to place.
     :param wrapper: The TicTacToeWrapper to copy and place the marker in.
     :param action:  The coordinate tuple to play.
-    :param marker:  The marker to place.
+    :param index:   The index of the marker to place.
     :return:        A new wrapped TicTacToeWrapper.
     """
-    assert (len(action) == wrapper.data.ndim)
+    assert (len(action) == wrapper.data.ndim - 1)
     new_copy = np.copy(wrapper.data)
-    new_copy[action] = marker
+    new_copy[index][action] = True
     return TicTacToeWrapper(new_copy)
+
 
 @lru_cache(maxsize=None)
 def min_max_value(wrapper, turn):
@@ -68,7 +69,7 @@ def min_max_value(wrapper, turn):
     if game_state_utility is not None:
         return game_state_utility
 
-    successors = map(lambda action: play(wrapper, action, X_MARKER if turn else O_MARKER),
+    successors = map(lambda action: play(wrapper, action, 0 if turn else 1),
                      tictactoe.available_spots(wrapper.data))
     if turn:  # We are X and want to maximize for ourselves.
         found_tie = False

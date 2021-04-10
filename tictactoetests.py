@@ -53,29 +53,29 @@ class TestHasWon2D(unittest.TestCase):
         Neither player should win a game in progress.
         """
         # No one should win a blank game.
-        self.assertFalse(tictactoe.has_won_2d(data.BLANK_GAME_2D, data.X_MARKER))
-        self.assertFalse(tictactoe.has_won_2d(data.BLANK_GAME_2D, data.O_MARKER))
+        self.assertFalse(tictactoe.has_won_2d(data.BLANK_GAME_2D[0]))
+        self.assertFalse(tictactoe.has_won_2d(data.BLANK_GAME_2D[1]))
         # No one should win a game we marked as only being midgame.
-        self.assertFalse(tictactoe.has_won_2d(data.MIDGAME_2D, data.X_MARKER))
-        self.assertFalse(tictactoe.has_won_2d(data.MIDGAME_2D, data.O_MARKER))
+        self.assertFalse(tictactoe.has_won_2d(data.MIDGAME_2D[0]))
+        self.assertFalse(tictactoe.has_won_2d(data.MIDGAME_2D[1]))
 
     def test_games_won(self):
         """
         Only the player we designed as winning a game should win a game.
         """
         # Only X should win the X_WON board.
-        self.assertTrue(tictactoe.has_won_2d(data.X_WON_2D, data.X_MARKER))
-        self.assertFalse(tictactoe.has_won_2d(data.X_WON_2D, data.O_MARKER))
+        self.assertTrue(tictactoe.has_won_2d(data.X_WON_2D[0]))
+        self.assertFalse(tictactoe.has_won_2d(data.X_WON_2D[1]))
         # Only O should win the O_WON board.
-        self.assertTrue(tictactoe.has_won_2d(data.O_WON_2D, data.O_MARKER))
-        self.assertFalse(tictactoe.has_won_2d(data.O_WON_2D, data.X_MARKER))
+        self.assertTrue(tictactoe.has_won_2d(data.O_WON_2D[1]))
+        self.assertFalse(tictactoe.has_won_2d(data.O_WON_2D[0]))
 
     def test_tied_games(self):
         """
         No one should win a tied game.
         """
-        self.assertFalse(tictactoe.has_won_2d(data.TIED_2D, data.X_MARKER))
-        self.assertFalse(tictactoe.has_won_2d(data.TIED_2D, data.O_MARKER))
+        self.assertFalse(tictactoe.has_won_2d(data.TIED_2D[0]))
+        self.assertFalse(tictactoe.has_won_2d(data.TIED_2D[1]))
 
 
 class TestGameOver2D(unittest.TestCase):
@@ -114,33 +114,33 @@ class TestHasWon3D(unittest.TestCase):
         In progress games are not won by either player.
         """
         # Neither player should win a blank game.
-        self.assertFalse(tictactoe.has_won_3d(data.BLANK_GAME_3D, data.X_MARKER))
-        self.assertFalse(tictactoe.has_won_3d(data.BLANK_GAME_3D, data.O_MARKER))
+        self.assertFalse(tictactoe.has_won_3d(data.BLANK_GAME_3D[0]))
+        self.assertFalse(tictactoe.has_won_3d(data.BLANK_GAME_3D[1]))
 
     def test_won_games(self):
         """
         Only players we designated as winning should win their games.
         """
         # X should win along one axis easily.
-        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_X, data.X_MARKER))
-        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_Y, data.X_MARKER))
-        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_Z, data.X_MARKER))
+        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_X[0]))
+        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_Y[0]))
+        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_Z[0]))
         # O should lose along those axes easily.
-        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_X, data.O_MARKER))
-        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_Y, data.O_MARKER))
-        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_Z, data.O_MARKER))
+        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_X[1]))
+        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_Y[1]))
+        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_Z[1]))
         # X should win when it has three in a row in a 2D slice.
-        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_XY, data.X_MARKER))
-        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_XZ, data.X_MARKER))
-        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_YZ, data.X_MARKER))
+        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_XY[0]))
+        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_XZ[0]))
+        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_YZ[0]))
         # O should therefore lose when X wins in those slices.
-        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_XY, data.O_MARKER))
-        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_XZ, data.O_MARKER))
-        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_YZ, data.O_MARKER))
+        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_XY[1]))
+        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_XZ[1]))
+        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_YZ[1]))
         # X should win across 3-dimensional diagonals.
-        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_XYZ, data.X_MARKER))
+        self.assertTrue(tictactoe.has_won_3d(data.X_WON_3D_XYZ[0]))
         # And O should lose these.
-        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_XYZ, data.O_MARKER))
+        self.assertFalse(tictactoe.has_won_3d(data.X_WON_3D_XYZ[1]))
 
 
 if __name__ == '__main__':

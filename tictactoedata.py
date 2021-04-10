@@ -4,66 +4,73 @@ This module contains data definitions and examples for games of tic-tac-toe.
 
 import numpy as np
 
-# A tic-tac-toe mark is defined as one of the following.
-# Markers will always fit within a signed byte.
-X_MARKER = -1
-O_MARKER = 1
-BLANK_MARKER = 0
-
 # I'll also include these short-hands for creating examples.
-# Though the full name should be used in code.
-X = X_MARKER
-O = O_MARKER
-_ = BLANK_MARKER
+# Though these betray how the array's are actually laid out.
+X = 0
+O = 1
+_ = -1
 
-# A game of tic tac toe is a matrix of N dimensions,
-# of the char data type (dtype=np.dtype('b')),
-# with each axis having a length of 3,
-# and all elements being a tic-tac-toe mark.
+
+# A game of N-dimensional tic tac toe is a matrix of N + 1 dimensions,
+# of the boolean data type,
+# with the first axis having a length of 2,
+# and subsequent axes having a length of 3.
+# The first axis represents if the rest of the matrix is for the x (0) or o mark (1).
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~2-Dimensional Games~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
+def reshape(arr):
+    """
+    A function to reshape a D-dimensional array of numbers into a D+1-dimensional array of boolean values.
+    :param arr: The game array to convert.
+    :return:    A new array with one dimension being for what mark it is.
+    """
+    return np.array([arr == X, arr == O], dtype=bool)
+
+
 # A blank game.
-BLANK_GAME_2D = np.zeros((3, 3), dtype=np.dtype('b'))
+BLANK_GAME_2D = np.zeros((2, 3, 3), dtype=bool)
 
 # We define some more complicated examples below as well, the purpose being to aid testing.
-X_WON_2D = np.array([
+X_WON_2D = reshape(np.array([
     [O, O, _],
     [X, O, _],
     [X, X, X],
-], dtype=np.dtype('b'))
+]))
 
-O_WON_2D = np.array([
+O_WON_2D = reshape(np.array([
     [_, _, O],
     [X, O, X],
     [O, _, _],
-], dtype=np.dtype('b'))
+]))
 
-TIED_2D = np.array([
+TIED_2D = reshape(np.array([
     [O, O, X],
     [X, X, O],
     [O, X, O],
-], dtype=np.dtype('b'))
+]))
 
-MIDGAME_2D = np.array([
+MIDGAME_2D = reshape(np.array([
     [O, _, X],
     [_, _, _],
     [X, _, _]
-], dtype=np.dtype('b'))
+]))
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~3-Dimensional Games~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-# Numpy slice access on these cubes goes indexing the planes, we might think of this as z.
+# Numpy slice access on these cubes goes indexing the marks,
+# Then it indexes the planes, we might think of this as z.
 # Then it indexes the rows, we might think of this as y.
-# THen it indexes the columns, we might think of this as x.
-BLANK_GAME_3D = np.zeros((3, 3, 3), dtype=np.dtype('b'))
+# Then it indexes the columns, we might think of this as x.
+BLANK_GAME_3D = np.zeros((2, 3, 3, 3), dtype=bool)
 
 # An X dimensional win. X wins along the easiest slice.
-X_WON_3D_X = np.array([
+X_WON_3D_X = reshape(np.array([
     [
         [O, O, _],
         [X, O, _],
@@ -79,11 +86,11 @@ X_WON_3D_X = np.array([
         [_, _, _],
         [_, _, _],
     ]
-], dtype=np.dtype('b'))
+]))
 
 # Y dimensional win.
 # X wins through coordinates (0, 0, 0), (0, 1, 0), and (0, 2, 0).
-X_WON_3D_Y = np.array([
+X_WON_3D_Y = reshape(np.array([
     [
         [X, _, _],
         [X, _, O],
@@ -99,11 +106,11 @@ X_WON_3D_Y = np.array([
         [_, _, _],
         [_, _, _],
     ]
-], dtype=np.dtype('b'))
+]))
 
 # Z dimensional win
 # X wins with the coordinates (1, 0, 0), (1, 0, 1), and (1, 0, 2).
-X_WON_3D_Z = np.array([
+X_WON_3D_Z = reshape(np.array([
     [
         [_, X, _],
         [_, _, _],
@@ -119,10 +126,10 @@ X_WON_3D_Z = np.array([
         [_, _, _],
         [_, _, _],
     ]
-], dtype=np.dtype('b'))
+]))
 
 # X wins on the XY plane.
-X_WON_3D_XY = np.array([
+X_WON_3D_XY = reshape(np.array([
     [
         [_, _, _],
         [_, _, _],
@@ -138,10 +145,10 @@ X_WON_3D_XY = np.array([
         [O, _, _],
         [_, _, _],
     ]
-], dtype=np.dtype('b'))
+]))
 
 # X wins on the XZ plane.
-X_WON_3D_XZ = np.array([
+X_WON_3D_XZ = reshape(np.array([
     [
         [_, _, _],
         [_, _, _],
@@ -157,10 +164,10 @@ X_WON_3D_XZ = np.array([
         [_, _, O],
         [X, _, _],
     ]
-], dtype=np.dtype('b'))
+]))
 
 # X wins on the YZ plane.
-X_WON_3D_YZ = np.array([
+X_WON_3D_YZ = reshape(np.array([
     [
         [_, _, X],
         [_, _, _],
@@ -176,10 +183,10 @@ X_WON_3D_YZ = np.array([
         [_, O, _],
         [_, _, X],
     ]
-], dtype=np.dtype('b'))
+]))
 
 # X wins on a diagonal through the cube.
-X_WON_3D_XYZ = np.array([
+X_WON_3D_XYZ = reshape(np.array([
     [
         [_, _, X],
         [_, _, _],
@@ -195,10 +202,10 @@ X_WON_3D_XYZ = np.array([
         [_, _, _],
         [X, _, _],
     ]
-], dtype=np.dtype('b'))
+]))
 
 # X has an initial move in the center.
-X_TAKEN_CENTER_CENTER_3D = np.array([
+X_TAKEN_CENTER_CENTER_3D = reshape(np.array([
     [
         [_, _, _],
         [_, _, _],
@@ -214,9 +221,9 @@ X_TAKEN_CENTER_CENTER_3D = np.array([
         [_, _, _],
         [_, _, _],
     ]
-], dtype=np.dtype('b'))
+]))
 
-reshape_lambda = lambda arr: np.array(arr).reshape((3, 3, 3))
+reshape_lambda = lambda arr: reshape(np.array(arr).reshape((3, 3, 3)))
 
 # The following is a game played between Mathias (X) and Jamie (O) as flattened arrays.
 GAME_1 = list(
