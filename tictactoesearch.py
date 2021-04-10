@@ -68,25 +68,21 @@ def min_max_value(wrapper, turn):
     game_state_utility = utility(wrapper)
     if game_state_utility is not None:
         return game_state_utility
-
     successors = map(lambda action: play(wrapper, action, 0 if turn else 1),
                      tictactoe.available_spots(wrapper.data))
-    if turn:  # We are X and want to maximize for ourselves.
-        found_tie = False
-        for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
-            if successor_utility == 1:
-                return 1
-            elif successor_utility == 0:
-                found_tie = True
-        return 0 if found_tie else -1
-    else:  # We are O and want to minimize.
-        found_tie = False
-        for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
-            if successor_utility == -1:
-                return -1
-            elif successor_utility == 0:
-                found_tie = True
-        return 0 if found_tie else 1
+    seen_zero = False
+    for successor_utility in map(lambda successor: min_max_value(successor, not turn),
+                                 successors):
+        if turn and successor_utility == 1:
+            return 1
+        if not turn and successor_utility == -1:
+            return -1
+        if successor_utility == 0:
+            seen_zero = True
+    if seen_zero:  # If we didn't return out early then zero, if seen, will be our greatest or smallest value.
+        return 0
+    else:  # Otherwise, we return the minimum of what we saw.
+        return -1 if turn else 1
 
 
 if __name__ == '__main__':
