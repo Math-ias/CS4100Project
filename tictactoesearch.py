@@ -4,23 +4,7 @@ A module to run search algorithms on a game of tic tac toe.
 
 from functools import lru_cache
 import tictactoe
-
-from tictactoedata import FIVE_FROM_FILLED
-from tictactoedata import NINE_FROM_FILLED
-from tictactoedata import TEN_FROM_FILLED
-from tictactoedata import ELEVEN_FROM_FILLED
-from tictactoedata import RANDOM_INCOMPLETE
-from tictactoedata import RANDOM_INCOMPLETE_LESS
-from tictactoedata import RANDOM_INCOMPLETE_LESSER
-from tictactoedata import RANDOM_INCOMPLETE_LESSERV2
-from tictactoedata import RANDOM_INCOMPLETE_MORE_LESSER
-
-
-from tictactoedata import FIVE_FILLED
-from tictactoedata import SIX_FILLED
-from tictactoedata import SEVEN_FILLED
-
-
+from tictactoedata import GAME_2
 import numpy as np
 from hashlib import sha1
 
@@ -33,7 +17,7 @@ class TicTacToeWrapper:
     def __init__(self, data):
         self.data = data
         # This method copied from https://stackoverflow.com/a/5173201
-        self.hash = int(sha1(data.view(np.uint8)).hexdigest(), 16)
+        self.hash = int(sha1(data.view(np.bool)).hexdigest(), 16)
 
     def __hash__(self):
         return self.hash
@@ -42,7 +26,6 @@ class TicTacToeWrapper:
         return np.all(self.data == other.data)
 
 
-@lru_cache(maxsize=None)
 def utility(wrapper):
     """
     Defines the utility for a X of a board of TicTacToe.
@@ -67,7 +50,6 @@ def play(wrapper, action, index):
     :param index:   The index of the marker to place.
     :return:        A new wrapped TicTacToeWrapper.
     """
-    assert (len(action) == wrapper.data.ndim - 1)
     new_copy = np.copy(wrapper.data)
     new_copy[index][action] = True
     return TicTacToeWrapper(new_copy)
@@ -106,4 +88,4 @@ def min_max_value(wrapper, turn):
 
 
 if __name__ == '__main__':
-    print("Nine: ", min_max_value(TicTacToeWrapper(NINE_FROM_FILLED), True))
+    print("Nine: ", min_max_value(TicTacToeWrapper(GAME_2[-2]), True))
