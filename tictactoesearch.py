@@ -4,7 +4,23 @@ A module to run search algorithms on a game of tic tac toe.
 
 from functools import lru_cache
 import tictactoe
-from tictactoedata import GAME_2
+
+from tictactoedata import FIVE_FROM_FILLED
+from tictactoedata import NINE_FROM_FILLED
+from tictactoedata import TEN_FROM_FILLED
+from tictactoedata import ELEVEN_FROM_FILLED
+from tictactoedata import RANDOM_INCOMPLETE
+from tictactoedata import RANDOM_INCOMPLETE_LESS
+from tictactoedata import RANDOM_INCOMPLETE_LESSER
+from tictactoedata import RANDOM_INCOMPLETE_LESSERV2
+from tictactoedata import RANDOM_INCOMPLETE_MORE_LESSER
+
+
+from tictactoedata import FIVE_FILLED
+from tictactoedata import SIX_FILLED
+from tictactoedata import SEVEN_FILLED
+
+
 import numpy as np
 from hashlib import sha1
 
@@ -70,20 +86,24 @@ def min_max_value(wrapper, turn):
         return game_state_utility
     successors = map(lambda action: play(wrapper, action, 0 if turn else 1),
                      tictactoe.available_spots(wrapper.data))
-    seen_zero = False
-    for successor_utility in map(lambda successor: min_max_value(successor, not turn),
-                                 successors):
-        if turn and successor_utility == 1:
-            return 1
-        if not turn and successor_utility == -1:
-            return -1
-        if successor_utility == 0:
-            seen_zero = True
-    if seen_zero:  # If we didn't return out early then zero, if seen, will be our greatest or smallest value.
-        return 0
-    else:  # Otherwise, we return the minimum of what we saw.
-        return -1 if turn else 1
+
+    if turn:  # We are X and want to maximize for ourselves.
+        found_tie = False
+        for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
+            if successor_utility == 1:
+                return 1
+            elif successor_utility == 0:
+                found_tie = True
+        return 0 if found_tie else -1
+    else:  # We are O and want to minimize.
+        found_tie = False
+        for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
+            if successor_utility == -1:
+                return -1
+            elif successor_utility == 0:
+                found_tie = True
+        return 0 if found_tie else 1
 
 
 if __name__ == '__main__':
-    print(min_max_value(TicTacToeWrapper(GAME_2[-2]), True))
+    print("Nine: ", min_max_value(TicTacToeWrapper(NINE_FROM_FILLED), True))
