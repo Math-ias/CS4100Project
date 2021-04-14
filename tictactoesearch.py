@@ -4,7 +4,23 @@ A module to run search algorithms on a game of tic tac toe.
 
 from functools import lru_cache
 import tictactoe
-from tictactoedata import GAME_2
+
+from tictactoedata import FIVE_FROM_FILLED
+from tictactoedata import NINE_FROM_FILLED
+from tictactoedata import TEN_FROM_FILLED
+from tictactoedata import ELEVEN_FROM_FILLED
+from tictactoedata import RANDOM_INCOMPLETE
+from tictactoedata import RANDOM_INCOMPLETE_LESS
+from tictactoedata import RANDOM_INCOMPLETE_LESSER
+from tictactoedata import RANDOM_INCOMPLETE_LESSERV2
+from tictactoedata import RANDOM_INCOMPLETE_MORE_LESSER
+
+
+from tictactoedata import FIVE_FILLED
+from tictactoedata import SIX_FILLED
+from tictactoedata import SEVEN_FILLED
+
+
 import numpy as np
 from hashlib import sha1
 
@@ -71,17 +87,46 @@ def min_max_value(wrapper, turn):
 
     successors = map(lambda action: play(wrapper, action, 0 if turn else 1),
                      tictactoe.available_spots(wrapper.data))
+
+
+
+
+    # if (turn):
+    #     # print(turn)
+    #     value = -100000000
+    #     for i in successors:
+    #         value = max(value, min_max_value(i, not turn))
+        
+    #     return value
+
+    # else:
+    #     # print(turn)
+    #     value = 100000000
+
+    #     for j in successors:
+    #         value = min(value, min_max_value(j, not turn))
+        
+    #     return value
+
+
+
+
     if turn:  # We are X and want to maximize for ourselves.
+        print("Xbranch")
         found_tie = False
         for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
+            print(successor_utility)
             if successor_utility == 1:
                 return 1
             elif successor_utility == 0:
                 found_tie = True
         return 0 if found_tie else -1
     else:  # We are O and want to minimize.
+        print("Obranch")
+        
         found_tie = False
         for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
+            print(successor_utility)
             if successor_utility == -1:
                 return -1
             elif successor_utility == 0:
@@ -90,4 +135,16 @@ def min_max_value(wrapper, turn):
 
 
 if __name__ == '__main__':
-    print(min_max_value(TicTacToeWrapper(GAME_2[-2]), True))
+    # print("Nine From:", min_max_value(TicTacToeWrapper(NINE_FROM_FILLED), True))
+    # print("Ten From:", min_max_value(TicTacToeWrapper(TEN_FROM_FILLED), False))
+    # print("Eleven From:", min_max_value(TicTacToeWrapper(ELEVEN_FROM_FILLED), True))
+    # print("Random From:", min_max_value(TicTacToeWrapper(RANDOM_INCOMPLETE), True))
+    # print("Random Less From:", min_max_value(TicTacToeWrapper(RANDOM_INCOMPLETE_LESS), True))
+    #print("Random Lesser From:", min_max_value(TicTacToeWrapper(RANDOM_INCOMPLETE_LESSER), True))
+    # print("Random LesserV2 From:", min_max_value(TicTacToeWrapper(RANDOM_INCOMPLETE_LESSERV2), False))
+    ##print("Random More Lesser From:", min_max_value(TicTacToeWrapper(RANDOM_INCOMPLETE_MORE_LESSER), True))
+
+
+    # print("SEVEN_FILLED: ", min_max_value(TicTacToeWrapper(SEVEN_FILLED), False))
+    print("Nine: ", min_max_value(TicTacToeWrapper(NINE_FROM_FILLED), True))
+    # print("FIVE_FILLED: ", min_max_value(TicTacToeWrapper(FIVE_FILLED), False))
