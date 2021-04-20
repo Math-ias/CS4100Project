@@ -55,7 +55,6 @@ def play(wrapper, action, index):
     return TicTacToeWrapper(new_copy)
 
 
-@lru_cache(maxsize=None)
 def min_max_value(wrapper, turn):
     """
     Recursively finds the min, max, value of a certain wrapped game.
@@ -66,26 +65,45 @@ def min_max_value(wrapper, turn):
     game_state_utility = utility(wrapper)
     if game_state_utility is not None:
         return game_state_utility
-    successors = map(lambda action: play(wrapper, action, 0 if turn else 1),
-                     tictactoe.available_spots(wrapper.data))
+    else:
+        return min_max_value_helper(wrapper, turn)
+
+
+@lru_cache(maxsize=None)
+def min_max_value_helper(wrapper, turn):
+    """
+    Recursively finds the min, max, value of a certain wrapped game, exits early on utility.
+    :param wrapper: The TicTacToeWrapper to evaluate with a value.
+    :param turn:    A boolean indicating if it's x's turn (True) or not (False).
+    :return:        The end result utility of this wrapped game of tic tac toe after applying min max.
+    """
+    successors = list(map(lambda action: play(wrapper, action, 0 if turn else 1),
+                          tictactoe.available_spots(wrapper.data)))
+    successor_utilities = map(lambda successor: utility(successor), successors)
 
     if turn:  # We are X and want to maximize for ourselves.
+        if 1 in successor_utilities:
+            return 1
+
         found_tie = False
-        for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
-            if successor_utility == 1:
+        for successor_mm_utility in map(lambda successor: min_max_value_helper(successor, not turn), successors):
+            if successor_mm_utility == 1:
                 return 1
-            elif successor_utility == 0:
+            elif successor_mm_utility == 0:
                 found_tie = True
         return 0 if found_tie else -1
     else:  # We are O and want to minimize.
+        if -1 in successor_utilities:
+            return -1
+
         found_tie = False
-        for successor_utility in map(lambda successor: min_max_value(successor, not turn), successors):
-            if successor_utility == -1:
+        for successor_mm_utility in map(lambda successor: min_max_value_helper(successor, not turn), successors):
+            if successor_mm_utility == -1:
                 return -1
-            elif successor_utility == 0:
+            elif successor_mm_utility == 0:
                 found_tie = True
         return 0 if found_tie else 1
 
 
 if __name__ == '__main__':
-    print("Nine: ", min_max_value(TicTacToeWrapper(GAME_2[-2]), True))
+    print(min_max_value(TicTacToeWrapper(GAME_2[-2]), True))
