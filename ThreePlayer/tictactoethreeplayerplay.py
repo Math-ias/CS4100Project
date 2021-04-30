@@ -112,9 +112,9 @@ if __name__ == '__main__':
     print('Game is over.')
     if tictactoe.has_won_3d(last_frame[0]):
         print('X has won.')
-    if tictactoe.has_won_3d(last_frame[1]):
+    elif tictactoe.has_won_3d(last_frame[1]):
         print('O has won.')
-    if tictactoe.has_won_3d(last_frame[2]):
+    elif tictactoe.has_won_3d(last_frame[2]):
         print('R has won.')
     else:
         print('Tied.')
