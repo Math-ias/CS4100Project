@@ -42,16 +42,16 @@ def utility(wrapper):
         return None
 
 
-def play(wrapper, action, index):
+def play(wrapper, action, turn):
     """
     Play a coordinate action in tic tac toe given a game and the marker to place.
     :param wrapper: The TicTacToeWrapper to copy and place the marker in.
     :param action:  The coordinate tuple to play.
-    :param index:   The index of the marker to place.
+    :param turn:    A boolean indicating if it's x's turn (True) or not (False).
     :return:        A new wrapped TicTacToeWrapper.
     """
     new_copy = np.copy(wrapper.data)
-    new_copy[index][action] = True
+    new_copy[0 if turn else 1][action] = True
     return TicTacToeWrapper(new_copy)
 
 
@@ -85,32 +85,33 @@ def min_max_value_helper(wrapper, turn):
     :param turn:    A boolean indicating if it's x's turn (True) or not (False).
     :return:        The end result utility of this wrapped game of tic tac toe after applying min max.
     """
-    successors = list(map(lambda action: play(wrapper, action, 0 if turn else 1),
+    successors = list(map(lambda action: play(wrapper, action, turn),
                           possible_actions(wrapper)))
     successor_utilities = map(lambda successor: utility(successor), successors)
 
-    if turn:  # We are X and want to maximize for ourselves.
-        if 1 in successor_utilities:
-            return 1
+    # We exit early based on utility if we can.
+    if turn and 1 in successor_utilities:
+        return 1
+    if not turn and -1 in successor_utilities:
+        return -1
 
-        found_tie = False
-        for successor_mm_utility in map(lambda successor: min_max_value_helper(successor, not turn), successors):
-            if successor_mm_utility == 1:
-                return 1
-            elif successor_mm_utility == 0:
-                found_tie = True
-        return 0 if found_tie else -1
-    else:  # We are O and want to minimize.
-        if -1 in successor_utilities:
+    successor_values = map(lambda successor: min_max_value_helper(successor, not turn), successors)
+    found_tie = False
+
+    for successor_value in successor_values:
+        if successor_value == 0:
+            found_tie = True
+        if turn and successor_value == 1:
+            return 1
+        if not turn and successor_value == -1:
             return -1
 
-        found_tie = False
-        for successor_mm_utility in map(lambda successor: min_max_value_helper(successor, not turn), successors):
-            if successor_mm_utility == -1:
-                return -1
-            elif successor_mm_utility == 0:
-                found_tie = True
-        return 0 if found_tie else 1
+    if found_tie:
+        return 0
+    if turn and not found_tie:
+        return -1
+    if not turn and not found_tie:
+        return 1
 
 
 if __name__ == '__main__':
