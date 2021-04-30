@@ -5,6 +5,8 @@ A module to run search algorithms on a game of tic tac toe.
 from functools import lru_cache
 import tictactoe
 from tictactoedata import GAME_2
+from tictactoedata import BLANK_GAME_3D
+from tictactoedata import X_TAKEN_CENTER_CENTER_3D 
 import numpy as np
 from hashlib import sha1
 
@@ -106,4 +108,4 @@ def min_max_value_helper(wrapper, turn):
 
 
 if __name__ == '__main__':
-    print(min_max_value(TicTacToeWrapper(GAME_2[-2]), True))
+    print(min_max_value(TicTacToeWrapper(X_TAKEN_CENTER_CENTER_3D), False))
