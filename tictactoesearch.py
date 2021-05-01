@@ -114,31 +114,5 @@ def min_max_value_helper(wrapper, turn):
         return 1
 
 
-def min_max_action(wrapper, turn):
-    """
-    Returns the best action in tic tac toe given a game and the current turn.
-    :param wrapper: The TicTacToeWrapper to search.
-    :param turn:    A boolean indicating if it's x's turn (True) or not (False).
-    :return:        The best action for the player indicated by the turn flag.
-                    All actions if there isn't any.
-    """
-    actions = possible_actions(wrapper)
-    tying_action = None
-    for action in actions:
-        successor = play(wrapper, action)
-        value = min_max_value(successor, turn)
-        if turn and value == 1:
-            return action
-        if not turn and value == -1:
-            return action
-        if value == 0:
-            tying_action = action
-
-    if tying_action is not None:
-        return tying_action
-    else:
-        return actions
-
-
 if __name__ == '__main__':
     print(min_max_value(TicTacToeWrapper(X_TAKEN_CENTER_CENTER_3D), False))
