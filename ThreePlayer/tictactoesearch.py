@@ -1,10 +1,17 @@
+import enum
+# Using enum class create enumerations
+class Player(enum.Enum):
+   X = 1
+   O = 2
+   R = 3
+
 """
 A module to run search algorithms on a game of tic tac toe.
 """
 
 from functools import lru_cache
 import tictactoe
-from tictactoedata import X_TAKEN_CENTER_CENTER_3D, OUTSIDE_CENTER, OUTSIDE_CENTER2
+from tictactoedata import BLANK_GAME_3D, X_TAKEN_CENTER, X_ONE_AWAY, FORCED_GAME, TEST_GAME
 import numpy as np
 from hashlib import sha1
 
@@ -33,9 +40,11 @@ def utility(wrapper):
     :return:        The utility of tic tac toe if terminal, else None.
     """
     if tictactoe.has_won_3d(wrapper.data[0]):
-        return 1
+        return Player.X
     elif tictactoe.has_won_3d(wrapper.data[1]):
-        return -1
+        return Player.O
+    elif tictactoe.has_won_3d(wrapper.data[2]):
+        return Player.R
     elif tictactoe.game_over_3d(wrapper.data):
         return 0
     else:
@@ -51,7 +60,7 @@ def play(wrapper, action, turn):
     :return:        A new wrapped TicTacToeWrapper.
     """
     new_copy = np.copy(wrapper.data)
-    new_copy[0 if turn else 1][action] = True
+    new_copy[turn][action] = True
     return TicTacToeWrapper(new_copy)
 
 
@@ -74,7 +83,7 @@ def possible_actions(wrapper):
     Returns all the possible actions.
     :param wrapper: The TicTacToeWrapper to evaluate possible actions for.
     """
-    return list(filter(lambda x: x != (1, 1, 1), tictactoe.available_spots(wrapper.data)))
+    return tictactoe.available_spots(wrapper.data)
 
 
 @lru_cache(maxsize=None)
@@ -90,28 +99,35 @@ def min_max_value_helper(wrapper, turn):
     successor_utilities = map(lambda successor: utility(successor), successors)
 
     # We exit early based on utility if we can.
-    if turn and 1 in successor_utilities:
-        return 1
-    if not turn and -1 in successor_utilities:
-        return -1
+    if turn == 0 and Player.X in successor_utilities:
+        return Player.X
+    if turn == 1 and Player.O in successor_utilities:
+        return Player.O
+    if turn == 2 and Player.R in successor_utilities:
+        return Player.R
 
-    successor_values = map(lambda successor: min_max_value_helper(successor, not turn), successors)
+    successor_values = map(lambda successor: min_max_value_helper(successor, (turn + 1) % 3), successors)
     found_tie = False
 
     for successor_value in successor_values:
         if successor_value == 0:
             found_tie = True
-        if turn and successor_value == 1:
-            return 1
-        if not turn and successor_value == -1:
-            return -1
+        if turn == 0 and successor_value == Player.X:
+            return Player.X
+        if turn == 1 and successor_value == Player.O:
+            return Player.O
+        if turn == 2 and successor_value == Player.R:
+            return Player.R
+
 
     if found_tie:
         return 0
-    if turn and not found_tie:
-        return -1
-    if not turn and not found_tie:
-        return 1
+    if turn == 0 and not found_tie:
+        return Player.X
+    if turn == 1 and not found_tie:
+        return Player.O
+    if turn == 2 and not found_tie:
+        return Player.R
 
 
 def min_max_action(wrapper, turn):
@@ -141,4 +157,4 @@ def min_max_action(wrapper, turn):
 
 
 if __name__ == '__main__':
-    print(min_max_value(TicTacToeWrapper(OUTSIDE_CENTER), False))
+    print(min_max_value(TicTacToeWrapper(TEST_GAME), 1))

@@ -222,6 +222,45 @@ X_TAKEN_CENTER_CENTER_3D = reshape(np.array([
     ]
 ]))
 
+# X has an initial move in the center.
+OUTSIDE_CENTER = reshape(np.array([
+    [
+        [_, _, _],
+        [_, X, _],
+        [_, _, _],
+    ],
+    [
+        [_, _, _],
+        [_, _, _],
+        [_, _, _],
+    ],
+    [
+        [_, _, _],
+        [_, _, _],
+        [_, _, _],
+    ]
+]))
+
+# X has an initial move in the center.
+OUTSIDE_CENTER2 = reshape(np.array([
+    [
+        [_, _, _],
+        [_, X, _],
+        [_, _, _],
+    ],
+    [
+        [_, _, _],
+        [_, O, _],
+        [_, _, _],
+    ],
+    [
+        [_, _, _],
+        [_, _, _],
+        [_, _, _],
+    ]
+]))
+
+
 # Random incomplete, x turn
 ONE_FILLED = reshape(np.array([
     [
